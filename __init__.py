@@ -1,2 +1,2 @@
-# myapp Application
+# MyProject Package
 
