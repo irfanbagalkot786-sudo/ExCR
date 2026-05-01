@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Classroom AI Monitor{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Core Styles -->
+    <!-- Custom CSS -->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="nav-logo">
+            <div class="nav-logo-mark"><i class="fas fa-brain"></i></div>
+            <div class="nav-logo-text">
+                <strong>Classroom</strong><em>AI Monitor</em>
+            </div>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+            <li><a href="{% url 'webcam_demo' %}" class="{% if request.resolver_match.url_name == 'webcam_demo' %}active{% endif %}"><i class="fas fa-camera-retro"></i>Webcam <span
+                        class="nbadge">Live</span></a></li>
+            <li><a href="{% url 'analytics' %}" class="{% if request.resolver_match.url_name == 'analytics' %}active{% endif %}"><i class="fas fa-chart-line"></i>Analytics</a></li>
+            <li><a href="{% url 'videos:video_list' %}" class="{% if request.resolver_match.view_name == 'videos:video_list' %}active{% endif %}"><i class="fas fa-play-circle"></i>Videos</a></li>
+            <li><a href="{% url 'videos:video_upload' %}" class="{% if request.resolver_match.view_name == 'videos:video_upload' %}active{% endif %}"><i class="fas fa-cloud-upload-alt"></i>Upload</a></li>
+            <li><a href="{% url 'reports' %}" class="{% if request.resolver_match.url_name == 'reports' %}active{% endif %}"><i class="fas fa-file-signature"></i>Reports</a></li>
+            <li><a href="{% url 'privacy_protocol' %}" class="{% if request.resolver_match.url_name == 'privacy_protocol' %}active{% endif %}"><i class="fas fa-shield-halved"></i>Privacy</a></li>
+        </ul>
+
+        <div class="nav-right">
+
+            <a href="{% url 'logout' %}" class="nav-logout"><i class="fas fa-power-off"></i>Logout</a>
+        </div>
+    </nav>
+
+    <div class="page">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <div class="ft-soc">
+            <a href="#"><i class="fas fa-envelope"></i></a>
+            <a href="https://github.com/classroomAImonitor" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://www.youtube.com/@classroom-ai-monitor" target="_blank"><i class="fab fa-youtube"></i></a>
+            <a href="https://www.linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://x.com/SmartEngageAI" target="_blank"><i class="fab fa-twitter"></i></a>
+        </div>
+        <ul class="ft-nav">
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'analytics' %}">Analytics</a></li>
+        <li><a href="{% url 'reports' %}">Reports</a></li>
+        <li><a href="{% url 'privacy_protocol' %}">Privacy Policy</a></li>
+        <li><a href="{% url 'about' %}">Contact Us</a></li>
+        </ul>
+        <div class="ft-copy">Copyright &copy; 2026 Designed by <span>MR SADIQ</span></div>
+    </footer>
+
+    <script>
+        // Common Ripple Effect
+        document.querySelectorAll('.action-btn, .btn, .nav-links a').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                var r = document.createElement('span');
+                var rect = this.getBoundingClientRect();
+                r.style.cssText = 'position:absolute;border-radius:50%;background:rgba(255,255,255,0.35);width:6px;height:6px;top:' + (e.clientY - rect.top - 3) + 'px;left:' + (e.clientX - rect.left - 3) + 'px;transform:scale(0);animation:ripple .55s ease-out forwards;pointer-events:none;';
+                this.appendChild(r);
+                setTimeout(function () { r.remove(); }, 600);
+            });
+        });
+
+        var rippleStyle = document.createElement('style');
+        rippleStyle.textContent = '@keyframes ripple{to{transform:scale(30);opacity:0;}}';
+        document.head.appendChild(rippleStyle);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>
