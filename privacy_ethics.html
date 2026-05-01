@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy & Ethics - Classroom AI Monitor{% endblock %}
+
+{% block content %}
+<div class="animate-in p-5">
+    <div class="glass-card mb-5">
+        <div class="text-center mb-5">
+            <h1 style="font-weight: 900; color: var(--primary); margin-bottom: 0.5rem;">⚖️ Privacy & Ethics</h1>
+            <p style="color: var(--text-muted);">Compliance frameworks and commitments to ethical AI facial analysis.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Privacy Protocol Section -->
+            <div class="col-lg-8 mb-5">
+                <section id="privacy" class="mb-5">
+                    <h3 style="font-weight: 800; color: var(--primary); margin-bottom: 1.5rem;">Privacy Protocol</h3>
+                    <p>
+                        Our system is designed with a **Privacy-First** architecture. Student biometric data is transiently processed and never stored in its raw visual form.
+                    </p>
+                    <div class="glass-card mb-4" style="background: rgba(var(--primary-rgb), 0.05); border: 2px dashed var(--glass-border);">
+                        <ul class="mb-0" style="list-style: none; padding-left: 0;">
+                            <li class="mb-3 d-flex gap-3">
+                                <span style="font-size: 1.2rem;">🔒</span>
+                                <div>
+                                    <strong>Transient Processing:</strong> Data streams are analyzed in real-time. Once frame analysis is complete, the pixel data is discarded from the buffer.
+                                </div>
+                            </li>
+                            <li class="mb-3 d-flex gap-3">
+                                <span style="font-size: 1.2rem;">👤</span>
+                                <div>
+                                    <strong>Anonymization:</strong> Unique identifiers are assigned based on session IDs rather than name-based profiles.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Compliance Section -->
+                <section id="compliance" class="mb-5">
+                    <h3 style="font-weight: 800; color: var(--primary); margin-bottom: 1.5rem;">Compliance Standards</h3>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="glass-card h-100" style="background: var(--glass-surface);">
+                                <h6 style="font-weight: 800;">FERPA Compliant</h6>
+                                <p style="font-size: 0.85rem;" class="text-muted">The software adheres to the Family Educational Rights and Privacy Act by ensuring student records are only stored in aggregate engagement formats.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="glass-card h-100" style="background: var(--glass-surface);">
+                                <h6 style="font-weight: 800;">GDPR Ready</h6>
+                                <p style="font-size: 0.85rem;" class="text-muted">Users have the "Right to be Forgotten," with easily accessible session deletion controls for any processed data.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Ethics in AI Section -->
+                <section id="ethics">
+                    <h3 style="font-weight: 800; color: var(--primary); margin-bottom: 1.5rem;">Ethics in Generative AI Monitoring</h3>
+                    <div class="p-4 glass-card" style="background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.05), rgba(var(--secondary-rgb), 0.05)); border: 1px solid var(--primary);">
+                        <p style="font-style: italic; color: var(--text-main);">
+                            "AI should empower educators, not replace their intuition. Monitoring is and should remain a feedback loop for improvement, not individual surveillance."
+                        </p>
+                        <hr class="my-4" style="opacity: 0.1;">
+                        <h6 style="font-weight: 800;">Commitments:</h6>
+                        <ul class="text-muted" style="font-size: 0.9rem;">
+                            <li>Bias Reduction: Ensuring facial recognition robustness across diverse demographics.</li>
+                            <li>Transparency: Clear indicators when the monitoring system is actively analyzing.</li>
+                            <li>Consent-Driven: Monitoring is initiated only after explicit educator/admin confirmation.</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

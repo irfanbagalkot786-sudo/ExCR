@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - AI Classroom Engagement{% endblock %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header fu d1">
+    <div class="page-header-left">
+      <div class="page-eyebrow"><i class="fas fa-chart-line"></i>Neural Behavior Analysis</div>
+      <h1 class="page-title">Engagement Analytics</h1>
+      <p class="page-sub">Neural behavior distribution and session participation metrics.</p>
+    </div>
+    <div class="page-header-actions">
+      {% if video %}
+      <a href="{% url 'videos:video_export_csv' video.pk %}" class="btn btn-outline"><i class="fas fa-file-csv"></i>Export CSV</a>
+      <a href="{{ video.video_file.url }}" class="btn btn-outline"><i class="fas fa-play-circle"></i>Preview Video</a>
+      <a href="javascript:void(0)" data-url="{% url 'videos:video_delete' video.pk %}" onclick="confirmDelete(this.dataset.url)" class="btn btn-danger"><i class="fas fa-trash-alt"></i>Delete Data</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- EMPTY STATE -->
+  {% if message %}
+  <div class="empty-banner fu d2">
+    <i class="fas fa-info-circle"></i>
+    <h5>{{ message }}</h5>
+    <p>Upload a classroom session to begin neural behavior analysis.</p>
+    <a href="{% url 'videos:video_upload' %}" class="btn btn-primary"><i class="fas fa-cloud-upload-alt"></i>Upload Session</a>
+  </div>
+  {% endif %}
+
+  <!-- KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi k1 fu d2">
+      <div class="kpi-top"><div class="ki b"><i class="fas fa-users"></i></div></div>
+      <div class="kv">{{ total_students }}</div><div class="kl">Total Detected</div>
+    </div>
+    <div class="kpi k2 fu d3">
+      <div class="kpi-top"><div class="ki g"><i class="fas fa-check-circle"></i></div></div>
+      <div class="kv">{{ attentive }}</div><div class="kl">Attentive</div>
+    </div>
+    <div class="kpi k3 fu d4">
+      <div class="kpi-top"><div class="ki a"><i class="fas fa-clock"></i></div></div>
+      <div class="kv">{{ sleepy }}</div><div class="kl">Sleepy</div>
+    </div>
+    <div class="kpi k4 fu d5">
+      <div class="kpi-top"><div class="ki r"><i class="fas fa-exclamation-triangle"></i></div></div>
+      <div class="kv">{{ distracted }}</div><div class="kl">Distracted</div>
+    </div>
+  </div>
+
+  <!-- ENGAGEMENT INDEX -->
+  <div class="eng-card fu d3">
+    <div class="eng-val-wrap">
+      <div class="eng-val">{{ engagement_percentage }}%</div>
+      <div class="eng-label">Engagement Index</div>
+    </div>
+    <div class="eng-right">
+      <div class="eng-title">Session Performance Score</div>
+      <p class="eng-desc">Composite score derived from gaze vectors, posture landmarks, and attention duration mapping across all detected students in this session.</p>
+      <div class="track"><div class="fill" id="engFill"></div></div>
+      <div class="track-label"><span>0%</span><span>Target: 85%</span><span>100%</span></div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="charts-grid">
+    <div class="chart-card fu d4">
+      <div class="chart-card-hd"><i class="fas fa-chart-pie"></i>Behavior Mix</div>
+      <div style="height:300px;"><canvas id="pieChart"></canvas></div>
+    </div>
+    <div class="chart-card fu d5">
+      <div class="chart-card-hd"><i class="fas fa-chart-line"></i>Timeline Trend</div>
+      <div style="height:300px;"><canvas id="lineChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- NEUTRAL SUMMARY -->
+  <div class="neutral-bar fu d5">
+    <i class="fas fa-circle-info"></i>
+    <p><strong>Neutral State: {{ neutral }} students</strong> — Stable resting state, identifying participants with baseline engagement. These students are present and passively following session content.</p>
+  </div>
+
+</div><!-- /page -->
+
+<!-- Hidden Delete Form -->
+<form id="hiddenDeleteForm" method="POST" style="display:none;">{% csrf_token %}</form>
+
+<script>
+function confirmDelete(url) {
+  if (confirm('Are you sure you want to delete this analysis data? This action cannot be undone.')) {
+    const form = document.getElementById('hiddenDeleteForm');
+    form.action = url;
+    form.submit();
+  }
+}
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Animate fill bar
+  setTimeout(() => {
+    document.getElementById('engFill').style.width = '{{ engagement_percentage }}%';
+  }, 400);
+
+  const colors = {
+    green:  '#2E8B6A',
+    amber:  '#B07A2A',
+    red:    '#C0392B',
+    navy:   '#1A3A5C',
+    steel:  '#5B8DB8',
+    sky:    '#A8CCE8',
+    gray:   '#7A9DB8'
+  };
+
+  const attentiveVal  = Number('{{ attentive|default:"0" }}');
+  const sleepyVal     = Number('{{ sleepy|default:"0" }}');
+  const distractedVal = Number('{{ distracted|default:"0" }}');
+  const neutralVal    = Number('{{ neutral|default:"0" }}');
+
+  // Doughnut chart
+  new Chart(document.getElementById('pieChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Attentive', 'Sleepy', 'Distracted', 'Neutral'],
+      datasets: [{
+        data: [attentiveVal, sleepyVal, distractedVal, neutralVal],
+        backgroundColor: [colors.green, colors.amber, colors.red, colors.gray],
+        borderWidth: 3,
+        borderColor: '#ffffff'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '72%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { family: 'DM Sans', weight: '600', size: 11 }, padding: 16 }
+        }
+      }
+    }
+  });
+
+  // Line chart
+  const lineLabels = JSON.parse('{{ line_labels|default:"[]"|escapejs }}');
+  const lineValues = JSON.parse('{{ line_values|default:"[]"|escapejs }}');
+
+  new Chart(document.getElementById('lineChart'), {
+    type: 'line',
+    data: {
+      labels: lineLabels,
+      datasets: [{
+        label: 'Engagement Score',
+        data: lineValues,
+        borderColor: colors.navy,
+        backgroundColor: 'rgba(26,58,92,0.08)',
+        fill: true,
+        tension: 0.45,
+        borderWidth: 2.5,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: colors.navy
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true, max: 100,
+          grid: { color: 'rgba(26,58,92,0.06)' },
+          ticks: { font: { family: 'DM Sans', size: 10 }, color: '#7A9DB8' }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'DM Sans', size: 10 }, color: '#7A9DB8' }
+        }
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

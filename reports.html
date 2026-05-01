@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reports - AI Classroom Engagement{% endblock %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header fu d1">
+    <div>
+      <div class="page-eyebrow"><i class="fas fa-file-signature"></i>Historical Repository</div>
+      <h1 class="page-title">Engagement Reports</h1>
+      <p class="page-sub">Neural analysis summaries across all recorded classroom sessions.</p>
+    </div>
+    <div class="page-header-actions">
+      <a href="{% url 'reports_export_csv' %}" class="btn btn-outline"><i class="fas fa-file-csv"></i>Export Global Data</a>
+      <button onclick="window.print()" class="btn btn-outline"><i class="fas fa-print"></i>Print</button>
+    </div>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi k1 fu d2">
+      <div class="ki b"><i class="fas fa-folder-open"></i></div>
+      <div class="kv">{{ reports|length }}</div>
+      <div class="kl">Managed Sessions</div>
+    </div>
+    <div class="kpi k2 fu d3">
+      <div class="ki g"><i class="fas fa-chart-line"></i></div>
+      <div class="kv">{{ avg_engagement }}%</div>
+      <div class="kl">Institutional Avg</div>
+    </div>
+    <div class="kpi k3 fu d4">
+      <div class="ki s"><i class="fas fa-trophy"></i></div>
+      <div class="kv">{{ best_engagement }}%</div>
+      <div class="kl">Peak Performance</div>
+    </div>
+    <div class="kpi k4 fu d5">
+      <div class="ki p"><i class="fas fa-users"></i></div>
+      <div class="kv">{{ total_students_stat }}</div>
+      <div class="kl">Total Observations</div>
+    </div>
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="table-card fu d3">
+    <div class="table-card-header">
+      <i class="fas fa-table" style="color:var(--text-muted);font-size:.72rem;"></i>
+      <span class="table-card-header-title">Session Records</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="reports-table">
+        <thead>
+          <tr>
+            <th>Reference Date</th>
+            <th>Type</th>
+            <th>Session Context</th>
+            <th>Volume</th>
+            <th>Behavior Distribution</th>
+            <th>Performance Index</th>
+            <th>Operations</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for report in reports %}
+          <tr>
+            <td><span class="date-cell">{{ report.date|date:"M d, Y" }}</span></td>
+            <td>
+              {% if report.type == 'video' %}
+              <span class="type-badge video"><i class="fas fa-video"></i>Video</span>
+              {% else %}
+              <span class="type-badge webcam"><i class="fas fa-camera"></i>Webcam</span>
+              {% endif %}
+            </td>
+            <td><span class="title-cell">{{ report.title }}</span></td>
+            <td><span class="vol-badge">{{ report.total }}</span></td>
+            <td>
+              <div class="behavior-group">
+                <span class="bsq g" title="Attentive">{{ report.attentive }}</span>
+                <span class="bsq a" title="Sleepy">{{ report.sleepy }}</span>
+                <span class="bsq r" title="Distracted">{{ report.distracted }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="perf-cell">
+                <span class="perf-val">{{ report.engagement }}%</span>
+                <div class="perf-track">
+                   <div class="perf-fill" data-width="{{ report.engagement }}"></div>               
+              </div>
+            </td>
+            <td>
+              <div class="ops-cell">
+                {% if report.type == 'video' and report.heatmap %}
+                <button type="button" class="btn btn-amber" data-bs-toggle="modal" data-bs-target="#heatmapModal{{ report.original_id }}" style="padding:.45rem .9rem;font-size:.72rem;">
+                  <i class="fas fa-map-marked-alt"></i>Heatmap
+                </button>
+
+                <!-- Heatmap Modal -->
+                <div class="modal fade" id="heatmapModal{{ report.original_id }}" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-xl modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg" style="border-radius:var(--r-xl);overflow:hidden;background:var(--white);">
+                      <div class="modal-header border-0 pb-0 pt-4 px-4">
+                        <h5 class="modal-title" style="font-family:var(--font-display);color:var(--text-dark);"><i class="fas fa-fire-alt" style="color:var(--red);margin-right:.45rem;"></i>Distraction Heatmap</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body p-4 text-center">
+                        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:1rem;">Red zones indicate high distraction/disengagement density.</p>
+                        <img src="{{ report.heatmap }}" class="img-fluid" style="border-radius:var(--r);box-shadow:var(--shadow-md);" alt="Classroom Heatmap">
+                        <div style="margin-top:1.25rem;padding:1rem 1.25rem;background:var(--fog);border-radius:var(--r-sm);text-align:left;border:1px solid rgba(91,141,184,0.14);">
+                          <h6 style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:.4rem;">Insight Index</h6>
+                          <p style="font-size:.78rem;color:var(--text-mid);line-height:1.7;margin:0;">Hot color zones (Red/Yellow) highlight areas where students were consistently distracted or out of focus during the session.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+                <a href="{% url 'report_delete' report.id %}" class="btn btn-danger">Delete</a>                  
+              <i class="fas fa-trash-alt"></i>Delete
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr class="empty-row">
+            <td colspan="7">
+              <i class="fas fa-folder-open"></i>
+              <h6>No historical data available</h6>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<form id="hiddenDeleteForm" method="POST" style="display:none;">{% csrf_token %}</form>
+
+<script>
+function confirmDelete(url) {
+  if (confirm('Are you sure you want to delete this record?')) {
+    const form = document.getElementById('hiddenDeleteForm');
+    form.action = url;
+    form.submit();
+  }
+}
+document.querySelectorAll('.perf-fill').forEach(el => {
+    el.style.width = el.dataset.width + '%';
+});
+</script>
+{% endblock %}

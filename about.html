@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard | Classroom AI Monitor{% endblock %}
+
+{% block content %}
+
+
+<div class="container py-4">
+    <!-- TOP ROW: SYSTEM STATUS & HERO -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-9">
+            <div class="hero-industrial animate__animated animate__fadeIn">
+                <h1 class="fw-bold mb-2" style="color: var(--text-primary); letter-spacing: -1px;">Classroom Engagement
+                    Dashboard</h1>
+                <p class="text-secondary fs-5">Neural analysis hub bridging digital vision with pedagogical insights.
+                </p>
+                <div class="mt-4 d-flex gap-2">
+                    <span class="badge bg-light text-dark border px-3 py-2 rounded-2">v1.2.0 Stable</span>
+                    <span class="badge bg-light text-dark border px-3 py-2 rounded-2"><i
+                            class="fas fa-microchip me-1"></i> Edge Compute</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="clay-card p-4 h-100 d-flex flex-column justify-content-center border-start border-4"
+                style="border-left-color: var(--accent-green) !important;">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="spinner-grow spinner-grow-sm text-success me-2"></div>
+                    <span class="status-indicator">Engine Live</span>
+                </div>
+                <h2 class="fw-bold mb-0" style="color: var(--text-primary);">62 <small
+                        class="fs-6 text-muted fw-normal">FPS</small></h2>
+                <small class="text-secondary fw-semibold">Latency: 30ms // CPU: 14%</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECOND ROW: ANALYTICS PREVIEW -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="clay-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6 class="fw-bold text-uppercase small text-secondary m-0"><i class="fas fa-chart-area me-2"
+                            style="color: var(--accent-blue);"></i>Attention Vector Trend</h6>
+                    <select class="form-select form-select-sm w-auto border-0 bg-light fw-bold">
+                        <option>Real-time Feed</option>
+                        <option>Session Summary</option>
+                    </select>
+                </div>
+                <!-- Chart.js Area -->
+                <div
+                    style="height: 250px; background: rgba(0,0,0,0.02); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--panel-border);">
+                    <p class="text-secondary small fw-medium"><i class="fas fa-sync fa-spin me-2"></i> Initializing
+                        Visualization Stream...</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="clay-card p-4 h-100">
+                <h6 class="fw-bold text-uppercase small text-secondary mb-4">Focus Distribution</h6>
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small fw-bold">Active Engagement</span>
+                        <span class="small fw-bold" style="color: var(--accent-green);">65%</span>
+                    </div>
+                    <div class="progress" style="height: 6px; background: rgba(0,0,0,0.05);">
+                        <div class="progress-bar" style="width: 65%; background: var(--accent-green);"></div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small fw-bold">Passive Observation</span>
+                        <span class="small fw-bold" style="color: #D97706;">25%</span>
+                    </div>
+                    <div class="progress" style="height: 6px; background: rgba(0,0,0,0.05);">
+                        <div class="progress-bar" style="width: 25%; background: #D97706;"></div>
+                    </div>
+                </div>
+                <div class="mb-0">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small fw-bold">Disengaged State</span>
+                        <span class="small fw-bold text-danger">10%</span>
+                    </div>
+                    <div class="progress" style="height: 6px; background: rgba(0,0,0,0.05);">
+                        <div class="progress-bar bg-danger" style="width: 10%"></div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-top text-center" style="border-color: rgba(0,0,0,0.05) !important;">
+                    <p class="small text-secondary mb-0">Processing <strong>468 landmarks</strong> per user.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- THIRD ROW: LOGIC & PIPELINE -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-6">
+            <div class="clay-card p-5 h-100">
+                <h3 class="fw-bold mb-4" style="color: var(--text-primary);">🎯 Mission Statement</h3>
+                <p class="text-secondary" style="line-height: 1.8;">
+                    The <strong>Classroom AI Monitor</strong> automates the observation of student engagement.
+                    By converting micro-behaviors into Evidence-Based Pedagogical data, we provide a non-intrusive
+                    solution for modern curriculum optimization and privacy-safe monitoring.
+                </p>
+                <div class="row g-3 mt-3">
+                    <div class="col-6 small fw-bold text-secondary"><i
+                            class="fas fa-user-shield text-primary me-2"></i>Privacy First</div>
+                    <div class="col-6 small fw-bold text-secondary"><i class="fas fa-bolt text-primary me-2"></i>Live
+                        Analysis</div>
+                    <div class="col-6 small fw-bold text-secondary"><i
+                            class="fas fa-database text-primary me-2"></i>Local Compute</div>
+                    <div class="col-6 small fw-bold text-secondary"><i
+                            class="fas fa-chart-pie text-primary me-2"></i>Actionable Insights</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="clay-card p-5 h-100">
+                <h3 class="fw-bold mb-4" style="color: var(--text-primary);">⚙️ Neural Architecture</h3>
+                <div class="d-flex mb-4">
+                    <div class="step-number me-3">01</div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Visual Ingestion</h6>
+                        <p class="small text-secondary mb-0">Multithreaded OpenCV stream capture at 60Hz.</p>
+                    </div>
+                </div>
+                <div class="d-flex mb-4">
+                    <div class="step-number me-3">02</div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Geometric Mapping</h6>
+                        <p class="small text-secondary mb-0">MediaPipe BlazeFace topology for 3D point extraction.</p>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="step-number me-3">03</div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Inference Engine</h6>
+                        <p class="small text-secondary mb-0">EAR & Pose estimation algorithms for focus scoring.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOURTH ROW: TECH STACK -->
+    <div class="mb-5 text-center">
+        <h6 class="fw-bold text-uppercase small text-secondary mb-4">Engineering Framework</h6>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <span class="tech-pill"><i class="fab fa-python me-2" style="color: #3776AB;"></i>Python 3.10</span>
+            <span class="tech-pill"><i class="fas fa-eye me-2 text-success"></i>OpenCV Core</span>
+            <span class="tech-pill"><i class="fas fa-brain me-2 text-danger"></i>MediaPipe AI</span>
+            <span class="tech-pill"><i class="fas fa-server me-2 text-info"></i>Django Framework</span>
+            <span class="tech-pill"><i class="fas fa-chart-line me-2 text-warning"></i>Chart.js</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,459 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Classroom Monitor</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="logo-mark"></div>
+    ClassMonitor AI
+  </a>
+  <ul class="nav-links">
+    <li><a href="#objectives">Objectives</a></li>
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#behavior">Behaviour</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="nav-auth">
+    {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="btn-register">Dashboard</a>
+      <a href="{% url 'logout' %}" class="btn-login">Logout</a>
+    {% else %}
+      <a href="{% url 'login' %}" class="btn-login">Login</a>
+      <a href="{% url 'register' %}" class="btn-register">Sign Up</a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-dots"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-left fade-up d1">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      Live Monitoring Active
+    </div>
+    <h1 class="hero-title">
+      AI-Driven<br><em>Classroom</em><br>Engagement Monitor
+    </h1>
+    <p class="hero-desc">
+      Real-time student behaviour analysis using Computer Vision, MediaPipe face detection, and Django. Transforming passive classrooms into data-driven learning environments.
+    </p>
+    <div class="hero-actions">
+     {% if user.is_authenticated %}
+       <a href="{% url 'dashboard' %}" class="btn-primary">Go to Dashboard →</a>
+     {% else %}
+       <a href="{% url 'register' %}" class="btn-primary">Get Started →</a>
+       <a href="{% url 'login' %}" class="btn-ghost">Login</a>
+     {% endif %}
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">4</div>
+        <div class="stat-lbl">Behaviour Categories</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">30fps</div>
+        <div class="stat-lbl">Real-time Processing</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">6+</div>
+        <div class="stat-lbl">System Modules</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right fade-up d2">
+    <div class="camera-frame">
+      <div class="cam-header">
+        <div class="cam-dots"><span></span><span></span><span></span></div>
+        <span class="cam-title">classroom_feed_01.mp4</span>
+        <div class="cam-rec"><span class="rec-dot"></span> LIVE</div>
+      </div>
+      <div class="cam-body">
+        <div class="cam-grid"></div>
+        <div class="scan-line"></div>
+        <div class="cam-overlay-info">
+          <span>FPS: 30 | RES: 1280×720</span>
+          <span>FACES: 6 | MODEL: MediaPipe</span>
+          <span>OPENCV: 4.8 | DJANGO: 5.0</span>
+        </div>
+        <div class="students-grid">
+          <div class="student-cell">
+            <div class="student-face">🧑‍🎓</div>
+            <div class="detect-box detect-attentive"></div>
+            <div class="student-status status-attentive">Attentive</div>
+          </div>
+          <div class="student-cell">
+            <div class="student-face">😴</div>
+            <div class="detect-box detect-sleepy"></div>
+            <div class="student-status status-sleepy">Sleepy</div>
+          </div>
+          <div class="student-cell">
+            <div class="student-face">🧑‍💻</div>
+            <div class="detect-box detect-attentive"></div>
+            <div class="student-status status-attentive">Attentive</div>
+          </div>
+          <div class="student-cell">
+            <div class="student-face">😶</div>
+            <div class="detect-box detect-neutral"></div>
+            <div class="student-status status-neutral">Neutral</div>
+          </div>
+          <div class="student-cell">
+            <div class="student-face">👀</div>
+            <div class="detect-box detect-distracted"></div>
+            <div class="student-status status-distracted">Distracted</div>
+          </div>
+          <div class="student-cell">
+            <div class="student-face">🧑‍🎓</div>
+            <div class="detect-box detect-attentive"></div>
+            <div class="student-status status-attentive">Attentive</div>
+          </div>
+        </div>
+      </div>
+      <div class="cam-footer">
+        <div class="cam-footer-stat"><div class="cam-footer-num attentive-num">3</div><div class="cam-footer-lbl">Attentive</div></div>
+        <div class="cam-footer-stat"><div class="cam-footer-num sleepy-num">1</div><div class="cam-footer-lbl">Sleepy</div></div>
+        <div class="cam-footer-stat"><div class="cam-footer-num distract-num">1</div><div class="cam-footer-lbl">Distracted</div></div>
+        <div class="cam-footer-stat"><div class="cam-footer-num neutral-num">1</div><div class="cam-footer-lbl">Neutral</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- INTRO -->
+<section class="intro-section" id="intro">
+  <div class="intro-inner fade-up d1">
+    <span class="intro-label">Introduction</span>
+    <h2>What is this system?</h2>
+    <p>
+      The AI-Driven Classroom Monitoring Engagement System is a smart solution that uses
+      <strong>Computer Vision</strong> and <strong>Artificial Intelligence</strong> to analyze
+      students' behaviour in real time. It captures live video from a classroom, detects student
+      faces, and classifies their engagement levels into four key states — then presents actionable
+      insights through a web dashboard built with <strong>Django</strong>.
+    </p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- OBJECTIVES -->
+<section id="objectives" class="objectives">
+  <div class="section-header">
+    <span class="section-tag">Objectives</span>
+    <h2 class="section-title">What we aim to achieve</h2>
+    <p class="section-desc">Four core goals driving every design and technical decision in this system.</p>
+  </div>
+  <div class="objectives-grid">
+    <div class="obj-card">
+      <div class="obj-number">01 / OBJECTIVE</div>
+      <span class="obj-icon">🔍</span>
+      <div class="obj-title">Automated Real-Time Monitoring</div>
+      <div class="obj-text">Monitor student engagement automatically without manual intervention, using live video feed analysis powered by OpenCV and MediaPipe.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-number">02 / OBJECTIVE</div>
+      <span class="obj-icon">👩‍🏫</span>
+      <div class="obj-title">Reduce Teacher Workload</div>
+      <div class="obj-text">Eliminate the need for manual observation by teachers, allowing them to focus entirely on delivering quality instruction.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-number">03 / OBJECTIVE</div>
+      <span class="obj-icon">🎯</span>
+      <div class="obj-title">Improve Teaching Quality</div>
+      <div class="obj-text">Use real-time engagement data to dynamically adapt teaching pace, methodology, and interaction style for maximum student impact.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-number">04 / OBJECTIVE</div>
+      <span class="obj-icon">📈</span>
+      <div class="obj-title">Data-Driven Institutional Growth</div>
+      <div class="obj-text">Provide aggregated insights to institutions to update learning modules, improve curriculum, and drive measurable academic outcomes.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MODULES -->
+<section id="modules" class="modules-section">
+  <div class="section-header">
+    <span class="section-tag">System Architecture</span>
+    <h2 class="section-title">Core System Modules</h2>
+    <p class="section-desc">Six tightly integrated modules form the backbone of the monitoring pipeline.</p>
+  </div>
+  <div class="modules-list">
+    <div class="module-row">
+      <div class="mod-num">01</div>
+      <div class="mod-name">
+        <div class="mod-icon bg-teal">📷</div>
+        <div><div class="mod-label">Video Capture</div><div class="mod-tech">OpenCV · CCTV / Webcam</div></div>
+      </div>
+      <div class="mod-desc">Captures real-time video using webcam or CCTV cameras. Continuously feeds frames to the processing pipeline for immediate analysis at 30fps.</div>
+    </div>
+    <div class="module-row">
+      <div class="mod-num">02</div>
+      <div class="mod-name">
+        <div class="mod-icon bg-blue">🧠</div>
+        <div><div class="mod-label">Face Detection</div><div class="mod-tech">MediaPipe · Facial Landmarks</div></div>
+      </div>
+      <div class="mod-desc">Uses MediaPipe's face mesh solution to detect and track 468 facial landmarks per student, enabling multi-face identification within a single frame.</div>
+    </div>
+    <div class="module-row">
+      <div class="mod-num">03</div>
+      <div class="mod-name">
+        <div class="mod-icon bg-lblue">📊</div>
+        <div><div class="mod-label">Behaviour Analysis</div><div class="mod-tech">ML Classifier · Eye Tracking</div></div>
+      </div>
+      <div class="mod-desc">Classifies each detected face into one of four engagement categories based on eye openness, head pose, and gaze direction.</div>
+    </div>
+    <div class="module-row">
+      <div class="mod-num">04</div>
+      <div class="mod-name">
+        <div class="mod-icon bg-indigo">⚡</div>
+        <div><div class="mod-label">Real-Time Processing</div><div class="mod-tech">OpenCV · Frame Pipeline</div></div>
+      </div>
+      <div class="mod-desc">Processes each frame in under 33ms to maintain real-time performance. Applies preprocessing, detection, classification, and annotation in a single optimized loop.</div>
+    </div>
+    <div class="module-row">
+      <div class="mod-num">05</div>
+      <div class="mod-name">
+        <div class="mod-icon bg-slate">🌐</div>
+        <div><div class="mod-label">Web Dashboard</div><div class="mod-tech">Django · REST API · WebSocket</div></div>
+      </div>
+      <div class="mod-desc">A Django-powered web interface displays live engagement statistics, historical trends, class-level summaries, and exportable reports for teachers and administrators.</div>
+    </div>
+    <div class="module-row">
+      <div class="mod-num">06</div>
+      <div class="mod-name">
+        <div class="mod-icon bg-sky">💾</div>
+        <div><div class="mod-label">Data Storage & Analytics</div><div class="mod-tech">Django ORM · SQLite / PostgreSQL</div></div>
+      </div>
+      <div class="mod-desc">All engagement records are persisted to a database with timestamps, enabling session-level analytics, trend analysis, and institutional reporting over time.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section class="pipeline-section">
+  <div class="section-header">
+    <span class="section-tag">Data Flow</span>
+    <h2 class="section-title">Processing Pipeline</h2>
+  </div>
+  <div class="pipeline-flow">
+    <div class="pipe-step"><div class="pipe-step-icon">📹</div><div class="pipe-step-label">Video Input</div><div class="pipe-step-sub">Webcam / CCTV</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-step-icon">🖼️</div><div class="pipe-step-label">Frame Capture</div><div class="pipe-step-sub">OpenCV · 30fps</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-step-icon">👁️</div><div class="pipe-step-label">Face Detection</div><div class="pipe-step-sub">MediaPipe</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-step-icon">🤖</div><div class="pipe-step-label">Classification</div><div class="pipe-step-sub">ML Model</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-step-icon">📡</div><div class="pipe-step-label">API Broadcast</div><div class="pipe-step-sub">Django REST</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-step-icon">📊</div><div class="pipe-step-label">Dashboard</div><div class="pipe-step-sub">Live Web UI</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-step-icon">💾</div><div class="pipe-step-label">Database</div><div class="pipe-step-sub">Analytics Store</div></div>
+  </div>
+</section>
+
+<!-- BEHAVIOR -->
+<section id="behavior" class="behavior-section">
+  <div class="section-header">
+    <span class="section-tag">Engagement Categories</span>
+    <h2 class="section-title">Student Behaviour Classification</h2>
+    <p class="section-desc">The system recognises four distinct engagement states, each detected through specific facial and head-pose signals.</p>
+  </div>
+  <div class="behavior-cards">
+    <div class="beh-card beh-attentive">
+      <span class="beh-emoji">🧑‍🎓</span>
+      <div class="beh-name">Attentive</div>
+      <div class="beh-desc">Student is focused, eyes open, and facing forward — actively engaged with the lecture or activity.</div>
+      <ul class="beh-signals">
+        <li>Eyes fully open</li>
+        <li>Head facing forward</li>
+        <li>Stable gaze direction</li>
+        <li>Upright posture</li>
+      </ul>
+    </div>
+    <div class="beh-card beh-sleepy">
+      <span class="beh-emoji">😴</span>
+      <div class="beh-name">Sleepy</div>
+      <div class="beh-desc">Student shows signs of drowsiness — drooping eyelids, slow blinks, or a tilted head position.</div>
+      <ul class="beh-signals">
+        <li>Drooping eyelids (EAR low)</li>
+        <li>Slow blink rate</li>
+        <li>Head tilt detected</li>
+        <li>Yawning detection</li>
+      </ul>
+    </div>
+    <div class="beh-card beh-distracted">
+      <span class="beh-emoji">👀</span>
+      <div class="beh-name">Distracted</div>
+      <div class="beh-desc">Student's head or gaze is turned away from the board or instructor, indicating loss of focus.</div>
+      <ul class="beh-signals">
+        <li>Head yaw angle deviation</li>
+        <li>Gaze off-screen</li>
+        <li>Frequent head turns</li>
+        <li>Phone/object interaction</li>
+      </ul>
+    </div>
+    <div class="beh-card beh-neutral">
+      <span class="beh-emoji">😶</span>
+      <div class="beh-name">Neutral</div>
+      <div class="beh-desc">Student is present and awake but shows no clear signs of active engagement or distraction.</div>
+      <ul class="beh-signals">
+        <li>Eyes open, minimal focus</li>
+        <li>Low facial expressivity</li>
+        <li>Passive body language</li>
+        <li>No interaction signals</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BENEFITS -->
+<section class="benefits-section">
+  <div class="section-header">
+    <span class="section-tag">Institutional Impact</span>
+    <h2 class="section-title">Benefits for Institutions</h2>
+  </div>
+  <div class="benefits-grid">
+    <div class="ben-card">
+      <div class="ben-icon-wrap">🎓</div>
+      <div class="ben-title">Interactive Classes</div>
+      <div class="ben-desc">Teachers can identify disengagement patterns in real time and immediately adjust their delivery style, boosting class participation and energy.</div>
+    </div>
+    <div class="ben-card">
+      <div class="ben-icon-wrap">📚</div>
+      <div class="ben-title">Updated Learning Modules</div>
+      <div class="ben-desc">Aggregated engagement data reveals which topics lose students' attention, guiding curriculum teams to redesign underperforming lessons.</div>
+    </div>
+    <div class="ben-card">
+      <div class="ben-icon-wrap">🚀</div>
+      <div class="ben-title">Student Engagement</div>
+      <div class="ben-desc">With data-backed interventions, institutions can proactively address distraction and drowsiness, creating a culture of active, focused learning.</div>
+    </div>
+    <div class="ben-card">
+      <div class="ben-icon-wrap">📊</div>
+      <div class="ben-title">Data-Driven Reports</div>
+      <div class="ben-desc">Session-level and historical reports give administrators a clear picture of classroom health and the ROI of teaching improvements over time.</div>
+    </div>
+    <div class="ben-card">
+      <div class="ben-icon-wrap">🌐</div>
+      <div class="ben-title">Online Class Support</div>
+      <div class="ben-desc">The system can be integrated with video platforms to monitor remote learners, extending smart monitoring beyond physical classrooms.</div>
+    </div>
+    <div class="ben-card">
+      <div class="ben-icon-wrap">⚙️</div>
+      <div class="ben-title">Scalable Infrastructure</div>
+      <div class="ben-desc">The Django backend supports multiple simultaneous classroom streams, making it deployable institution-wide with minimal configuration changes.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section id="faq" class="faq-section">
+  <div class="section-header">
+    <span class="section-tag">FAQ</span>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <p class="section-desc">Common questions about the project, its technology, and real-world application.</p>
+  </div>
+  <div class="faq-grid">
+    <div class="faq-item">
+      <div class="faq-q"><span class="faq-num">01</span> What is this project about?</div>
+      <div class="faq-a">An AI-based system that monitors student engagement in classrooms in real time using computer vision and facial analysis.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q"><span class="faq-num">02</span> Which technologies are used?</div>
+      <div class="faq-a">Python, OpenCV, MediaPipe, and Django form the core stack for video processing, face detection, and web-based result display.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q"><span class="faq-num">03</span> What is the role of OpenCV?</div>
+      <div class="faq-a">OpenCV handles image processing, real-time video capture, frame preprocessing, and visual annotation of detection results.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q"><span class="faq-num">04</span> Why MediaPipe for face detection?</div>
+      <div class="faq-a">MediaPipe provides fast, accurate, on-device face mesh detection with 468 facial landmarks — ideal for real-time engagement classification.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q"><span class="faq-num">05</span> What are the four behaviour categories?</div>
+      <div class="faq-a">Attentive (focused), Sleepy (drowsy), Distracted (looking away), and Neutral (present but passive).</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q"><span class="faq-num">06</span> Is the system real-time?</div>
+      <div class="faq-a">Yes — the system processes live video frames continuously at up to 30fps, with minimal latency between capture and dashboard update.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q"><span class="faq-num">07</span> What is Django used for?</div>
+      <div class="faq-a">Django serves as the web framework building the backend API, data models, admin interface, and live web dashboard for result display.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q"><span class="faq-num">08</span> How does behaviour detection work?</div>
+      <div class="faq-a">By analysing facial landmarks — eye aspect ratio, head yaw/pitch angle, and gaze direction — to infer engagement state per student.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q"><span class="faq-num">09</span> What are the limitations?</div>
+      <div class="faq-a">Performance may degrade in poor lighting conditions, with low camera quality, or where student privacy regulations restrict facial monitoring.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q"><span class="faq-num">10</span> Can it work for online classes?</div>
+      <div class="faq-a">Yes — with integration to video conferencing platforms like Zoom or Meet, the system can extend monitoring to remote learning sessions.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <span class="section-tag">Get Started</span>
+  <h2>Ready to monitor your classroom?</h2>
+  <p>Join institutions using AI-powered engagement tracking to transform how students learn and teachers teach.</p>
+  <div class="cta-btns">
+    {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="btn-cta-register">Go to Dashboard</a>
+    {% else %}
+      <a href="{% url 'login' %}" class="btn-cta-login">Login to Dashboard</a>
+      <a href="{% url 'register' %}" class="btn-cta-register">Create Free Account</a>
+    {% endif %}
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="custom-dark-footer">
+  <div class="container">
+    <div class="footer-social-icons">
+      <a href="mailto:classroomaimonitor@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
+      <a href="https://github.com/classroomAImonitor/ai-classroom-engagement-system" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+      <a href="https://www.youtube.com/@classroom-ai-monitor" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+      <a href="https://www.linkedin.com/in/classroom-ai-monitor-undefined-1831b6400" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="https://x.com/SmartEngageAI" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
+    </div>
+    <div class="footer-nav-links">
+      <a href="/privacy-protocol/">Privacy Policy</a>
+      <a href="mailto:classroomaimonitor@gmail.com">Contact Us</a>
+    </div>
+  </div>
+  <div class="footer-bottom-copy">
+    Copyright &copy; 2026 Designed by <span>MR SADIQ</span>
+  </div>
+</footer>
+
+</body>
+</html>

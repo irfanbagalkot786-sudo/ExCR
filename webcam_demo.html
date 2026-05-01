@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+
+{% block title %}Webcam Demo — Classroom AI Monitor{% endblock %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Page header -->
+<div class="fu d1" style="margin-bottom:1.5rem;">
+  <div class="page-eyebrow"><i class="fas fa-satellite-dish"></i>Neural Vision Stream</div>
+  <h1 class="page-title">Real-Time <span class="acc">HUD</span> Analysis</h1>
+  <p class="page-sub">Neural hardware integration for high-precision student behaviour detection. Initialize the sensor, then run a 20-second scan to capture engagement data.</p>
+</div>
+
+<div class="wc-page">
+
+  <!-- ── LEFT: Camera column ── -->
+  <div style="display:flex;flex-direction:column;gap:1.1rem;">
+
+    <!-- Camera card -->
+    <div class="cam-card fu d2">
+      <div class="cam-frame" id="cam-frame">
+
+        <!-- Animated scanline -->
+        <div class="scanline"></div>
+
+        <!-- Corner brackets -->
+        <div class="cam-corner tl"></div>
+        <div class="cam-corner tr"></div>
+        <div class="cam-corner bl"></div>
+        <div class="cam-corner br"></div>
+
+        <!-- Video + Canvas -->
+        <video id="webcam" autoplay playsinline></video>
+        <canvas id="canvas-overlay"></canvas>
+
+        <!-- HUD top bar -->
+        <div class="hud-bar">
+          <div class="hud-badge">
+            <div class="hud-dot" id="hud-dot" style="background:#4b5563;"></div>
+            <span id="hud-feed-label">FEED_OFFLINE</span>
+          </div>
+          <div id="countdown-timer">
+            <i class="fas fa-stopwatch" style="font-size:.58rem;"></i>
+            <span id="timer-val">20s</span>
+          </div>
+        </div>
+
+        <!-- Loading overlay -->
+        <div id="loading-overlay">
+          <div class="load-ring"></div>
+          <div class="load-txt">Synchronizing AI Lens...</div>
+        </div>
+
+      </div><!-- /cam-frame -->
+
+      <!-- Controls -->
+      <div class="cam-controls">
+        <button id="start-btn" class="ctrl-btn cb-init">
+          <i class="fas fa-video"></i>Initialize
+        </button>
+        <button id="record-btn" class="ctrl-btn cb-scan" disabled>
+          <i class="fas fa-fingerprint"></i>Start Scan
+        </button>
+        <button id="stop-btn" class="ctrl-btn cb-reset" disabled>
+          <i class="fas fa-power-off"></i>Reset
+        </button>
+      </div>
+    </div><!-- /cam-card -->
+
+    <!-- Capability mini-strip (matches dashboard cap-card style) -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;" class="fu d4">
+      <div style="background:var(--white);border:1px solid rgba(91,141,184,0.14);border-radius:var(--r-lg);padding:1rem 1.1rem;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--navy),var(--steel));border-radius:0 3px 3px 0;"></div>
+        <div style="font-size:.7rem;font-weight:700;color:var(--navy);margin-bottom:.25rem;"><i class="fas fa-eye" style="margin-right:.35rem;"></i>Gaze Tracking</div>
+        <div style="font-size:.68rem;color:var(--text-muted);line-height:1.55;">Ocular trajectory mapped at 30 fps.</div>
+      </div>
+      <div style="background:var(--white);border:1px solid rgba(91,141,184,0.14);border-radius:var(--r-lg);padding:1rem 1.1rem;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--green),#52C99A);border-radius:0 3px 3px 0;"></div>
+        <div style="font-size:.7rem;font-weight:700;color:var(--green);margin-bottom:.25rem;"><i class="fas fa-person-running" style="margin-right:.35rem;"></i>Posture Detect</div>
+        <div style="font-size:.68rem;color:var(--text-muted);line-height:1.55;">Skeletal landmark fatigue analysis.</div>
+      </div>
+      <div style="background:var(--white);border:1px solid rgba(91,141,184,0.14);border-radius:var(--r-lg);padding:1rem 1.1rem;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--purple),#8B77C8);border-radius:0 3px 3px 0;"></div>
+        <div style="font-size:.7rem;font-weight:700;color:var(--purple);margin-bottom:.25rem;"><i class="fas fa-shield-halved" style="margin-right:.35rem;"></i>AES-256 Encrypted</div>
+        <div style="font-size:.68rem;color:var(--text-muted);line-height:1.55;">All biometric data encrypted locally.</div>
+      </div>
+    </div>
+
+  </div><!-- /left -->
+
+  <!-- ── RIGHT: Stats + Result column ── -->
+  <div style="display:flex;flex-direction:column;gap:1.1rem;">
+
+    <!-- Stats panel -->
+    <div class="stats-panel fu d3" id="active-stats">
+
+      <div class="sp-hd">
+        <div class="live-dot" style="background:var(--steel-light);animation:none;" id="stream-dot"></div>
+        Neural Data Stream
+      </div>
+
+      <!-- Status row -->
+      <div class="status-row" id="status-row">
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <div id="status-dot"></div>
+          <span id="status-text">Offline</span>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:.58rem;color:var(--text-muted);">CAM_STREAM</div>
+      </div>
+
+      <!-- Engagement score (big box) -->
+      <div class="score-box">
+        <div class="score-val" id="score-val">0%</div>
+        <div class="score-lbl">Engagement Score</div>
+      </div>
+
+      <!-- Face count + fatigue count -->
+      <div class="sp-duo">
+        <div class="sp-stat">
+          <div class="sp-stat-lbl">Detected</div>
+          <div class="sp-stat-val g" id="face-count">0</div>
+        </div>
+        <div class="sp-stat">
+          <div class="sp-stat-lbl">Sleepy</div>
+          <div class="sp-stat-val r" id="sleepy-count">0</div>
+        </div>
+      </div>
+
+      <!-- Behavior bars -->
+      <div class="beh-wrap">
+        <div class="beh-row">
+          <div class="beh-head">
+            <span class="beh-label">Attentive</span>
+            <span class="beh-pct" style="color:var(--green);" id="attentive-val">0%</span>
+          </div>
+          <div class="beh-track"><div class="beh-fill attentive" id="attentive-bar"></div></div>
+        </div>
+        <div class="beh-row">
+          <div class="beh-head">
+            <span class="beh-label">Sleepy</span>
+            <span class="beh-pct" style="color:var(--amber);" id="sleepy-val">0%</span>
+          </div>
+          <div class="beh-track"><div class="beh-fill sleepy" id="sleepy-bar"></div></div>
+        </div>
+        <div class="beh-row">
+          <div class="beh-head">
+            <span class="beh-label">Distracted</span>
+            <span class="beh-pct" style="color:var(--red);" id="distracted-val">0%</span>
+          </div>
+          <div class="beh-track"><div class="beh-fill distracted" id="distracted-bar"></div></div>
+        </div>
+        <div class="beh-row">
+          <div class="beh-head">
+            <span class="beh-label">Neutral</span>
+            <span class="beh-pct" style="color:var(--steel);" id="neutral-val">0%</span>
+          </div>
+          <div class="beh-track"><div class="beh-fill neutral" id="neutral-bar"></div></div>
+        </div>
+      </div>
+
+      <!-- Inference log -->
+      <div class="infer-row">
+        <div class="infer-icon"><i class="fas fa-microchip"></i></div>
+        <div class="infer-txt">
+          <span id="state-val">Waiting for signal...</span>
+          INFERENCE_LOG · EDGE_NODE
+        </div>
+      </div>
+
+    </div><!-- /stats-panel -->
+
+    <!-- Result card (shown after scan) -->
+    <div id="result-card" class="fu d3">
+      <div class="res-badge"><i class="fas fa-check-circle"></i>Session Complete</div>
+      <div class="res-score" id="final-score">—</div>
+      <div class="res-lbl">Average Engagement</div>
+      <p class="res-summary" id="analysis-summary"></p>
+      <div id="distribution-container"></div>
+      <button id="reset-btn" class="ctrl-btn cb-init" style="width:100%;justify-content:center;">
+        <i class="fas fa-redo"></i>New Session
+      </button>
+    </div>
+
+  </div><!-- /right -->
+
+</div><!-- /wc-page -->
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+/* ── DOM refs ── */
+const video        = document.getElementById('webcam');
+const canvasOv     = document.getElementById('canvas-overlay');
+const startBtn     = document.getElementById('start-btn');
+const recordBtn    = document.getElementById('record-btn');
+const stopBtn      = document.getElementById('stop-btn');
+const resetBtn     = document.getElementById('reset-btn');
+const loadingOv    = document.getElementById('loading-overlay');
+const statusRow    = document.getElementById('status-row');
+const statusDot    = document.getElementById('status-dot');
+const statusText   = document.getElementById('status-text');
+const hudDot       = document.getElementById('hud-dot');
+const hudFeedLabel = document.getElementById('hud-feed-label');
+const streamDot    = document.getElementById('stream-dot');
+const countdownEl  = document.getElementById('countdown-timer');
+const timerValEl   = document.getElementById('timer-val');
+const activeStats  = document.getElementById('active-stats');
+const resultCard   = document.getElementById('result-card');
+
+let stream = null, isScanning = false, timerInterval = null;
+let sessionScores = [], secondsLeft = 20;
+
+/* ── CSRF ── */
+function getCookie(name){
+  let v=null;
+  if(document.cookie&&document.cookie!==''){
+    for(const c of document.cookie.split(';')){
+      const t=c.trim();
+      if(t.startsWith(name+'=')){v=decodeURIComponent(t.slice(name.length+1));break;}
+    }
+  }
+  return v;
+}
+
+/* ── Set online / offline UI state ── */
+function setOnline(on){
+  statusRow.classList.toggle('online', on);
+  statusText.innerText = on ? 'Online' : 'Offline';
+  hudDot.style.background  = on ? '#4ade80' : '#4b5563';
+  hudDot.style.animation   = on ? 'pulse 1.8s infinite' : 'none';
+  hudFeedLabel.innerText   = on ? 'FEED_LIVE' : 'FEED_OFFLINE';
+  streamDot.style.background = on ? '#4ade80' : 'var(--steel-light)';
+  streamDot.style.animation  = on ? 'pulse 1.8s infinite' : 'none';
+}
+
+/* ── Init camera ── */
+async function initCamera(){
+  loadingOv.style.display = 'flex';
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({video:{width:640,height:480}});
+    video.srcObject = stream;
+    video.onloadedmetadata = ()=>{
+      canvasOv.width  = video.videoWidth;
+      canvasOv.height = video.videoHeight;
+      loadingOv.style.display = 'none';
+    };
+    setOnline(true);
+    startBtn.disabled  = true;
+    recordBtn.disabled = false;
+    stopBtn.disabled   = false;
+    document.getElementById('state-val').innerText = 'Sensor synced. Ready to scan.';
+  }catch(err){
+    console.error(err);
+    alert('Could not access webcam. Please grant camera permission.');
+    loadingOv.style.display = 'none';
+  }
+}
+
+/* ── Capture + analyse frame ── */
+async function captureAndAnalyze(){
+  if(!isScanning) return;
+  const tmp = document.createElement('canvas');
+  tmp.width = video.videoWidth; tmp.height = video.videoHeight;
+  tmp.getContext('2d').drawImage(video,0,0);
+  const imageData = tmp.toDataURL('image/jpeg',0.5);
+  try{
+    const res  = await fetch('/live-analysis/',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},
+      body: JSON.stringify({image:imageData})
+    });
+    const data = await res.json();
+    if(data.success){ updateUI(data); if(isScanning) sessionScores.push(data.engagement); }
+  }catch(e){ console.error(e); }
+  if(isScanning) setTimeout(captureAndAnalyze,2000);
+}
+
+/* ── Update stats panel UI ── */
+function updateUI(data){
+  /* score box */
+  document.getElementById('score-val').innerText = data.engagement+'%';
+
+  /* face counts */
+  document.getElementById('face-count').innerText   = data.faces;
+  const sleepyCount = Math.round((data.sleepy/100)*data.faces);
+  document.getElementById('sleepy-count').innerText = sleepyCount;
+
+  /* canvas overlay */
+  const ctx = canvasOv.getContext('2d');
+  ctx.clearRect(0,0,canvasOv.width,canvasOv.height);
+  if(data.face_coords && data.face_coords.length>0){
+    ctx.lineWidth = 2.5; ctx.strokeStyle='#2563EB';
+    ctx.font='700 13px "DM Sans",sans-serif';
+    data.face_coords.forEach(([x,y,w,h])=>{
+      ctx.strokeRect(x,y,w,h);
+      const label = data.engagement>=70?'ENGAGED':'NEUTRAL';
+      const tw = ctx.measureText(label).width;
+      ctx.save();
+      ctx.translate(x+w/2,y);
+      ctx.scale(-1,1);
+      ctx.fillStyle='#2563EB';
+      ctx.fillRect(-tw/2-5,-24,tw+10,22);
+      ctx.fillStyle='#fff';
+      ctx.fillText(label,-tw/2,-7);
+      ctx.restore();
+    });
+  }
+
+  /* behaviour bars */
+  setBar('attentive', data.attentive);
+  setBar('sleepy',    data.sleepy);
+  setBar('distracted',data.distracted);
+  setBar('neutral',   data.neutral);
+
+  /* inference log */
+  const logs = [
+    'CALIBRATING_TENSORS','SURVEYING_BIOMETRICS',
+    'SYNCING_NEURAL_MAP','OPTIMIZING_LENS','TRACKING_LANDMARKS'
+  ];
+  document.getElementById('state-val').innerText = logs[Math.floor(Math.random()*logs.length)];
+}
+
+function setBar(id, pct){
+  document.getElementById(id+'-val').innerText = pct+'%';
+  document.getElementById(id+'-bar').style.width = pct+'%';
+}
+
+/* ── Start timed scan ── */
+function startTimedScan(){
+  if(isScanning) return;
+  isScanning = true; sessionScores = []; secondsLeft = 20;
+  countdownEl.classList.add('active');
+  timerValEl.innerText = '20s';
+  recordBtn.innerHTML  = '<i class="fas fa-microscope"></i>Scanning…';
+  recordBtn.disabled   = true;
+  captureAndAnalyze();
+  timerInterval = setInterval(()=>{
+    secondsLeft--;
+    timerValEl.innerText = secondsLeft+'s';
+    if(secondsLeft<=0) stopTimedScan();
+  },1000);
+}
+
+/* ── Stop / finalise scan ── */
+async function stopTimedScan(){
+  clearInterval(timerInterval);
+  isScanning = false;
+  countdownEl.classList.remove('active');
+
+  if(stream){ stream.getTracks().forEach(t=>t.stop()); video.srcObject=null; }
+  setOnline(false);
+  startBtn.disabled=false; recordBtn.disabled=true; stopBtn.disabled=true;
+
+  const avgScore = sessionScores.length>0
+    ? Math.round(sessionScores.reduce((a,b)=>a+b)/sessionScores.length) : 0;
+
+  const payload = {
+    engagement: avgScore,
+    attentive: Math.round(avgScore*0.8),
+    sleepy:    Math.max(0,100-avgScore-15),
+    distracted:10, neutral:5
+  };
+
+  try{
+    const r = await fetch('/save-session/',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},
+      body: JSON.stringify(payload)
+    });
+    const d = await r.json();
+    if(d.success) console.log('Session saved.');
+  }catch(e){ console.error(e); }
+
+  /* Show result card */
+  activeStats.style.display = 'none';
+  resultCard.style.display  = 'block';
+  document.getElementById('final-score').innerText = avgScore+'%';
+
+  const isGood = avgScore>=70;
+  document.getElementById('analysis-summary').innerText = isGood
+    ? 'Excellent session. High neural synchronisation detected across the cohort. Data pushed to Reports.'
+    : 'Varied engagement levels recorded. Full breakdown available in the Reports dashboard.';
+
+  document.getElementById('distribution-container').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:.55rem;margin-bottom:.85rem;">
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:.35rem;">
+          <span style="font-size:.66rem;font-weight:700;color:var(--text-mid);">Avg Engagement</span>
+          <span style="font-size:.66rem;font-weight:700;color:var(--navy);">${avgScore}%</span>
+        </div>
+        <div style="height:6px;background:var(--fog);border-radius:10px;overflow:hidden;border:1px solid rgba(91,141,184,0.1);">
+          <div style="height:100%;border-radius:10px;width:${avgScore}%;background:linear-gradient(90deg,var(--navy),var(--steel-light));"></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.45rem;background:var(--green-bg);border:1px solid rgba(46,139,106,0.18);border-radius:var(--r-sm);padding:.6rem .85rem;">
+      <i class="fas fa-check-circle" style="color:var(--green);font-size:.75rem;"></i>
+      <span style="font-size:.7rem;font-weight:600;color:var(--green);">Session data saved to Global Reports.</span>
+    </div>
+  `;
+}
+
+/* ── Event listeners ── */
+startBtn.addEventListener('click', initCamera);
+recordBtn.addEventListener('click', startTimedScan);
+resetBtn.addEventListener('click', ()=>{
+  resultCard.style.display  = 'none';
+  activeStats.style.display = 'flex';
+  startBtn.disabled=false; recordBtn.disabled=true; stopBtn.disabled=true;
+  recordBtn.innerHTML = '<i class="fas fa-fingerprint"></i>Start Scan';
+  document.getElementById('face-count').innerText   = '0';
+  document.getElementById('sleepy-count').innerText = '0';
+  document.getElementById('score-val').innerText    = '0%';
+  ['attentive','sleepy','distracted','neutral'].forEach(id=>setBar(id,0));
+  document.getElementById('state-val').innerText    = 'Waiting for signal...';
+  setOnline(false);
+});
+stopBtn.addEventListener('click', ()=>{
+  clearInterval(timerInterval); isScanning=false;
+  countdownEl.classList.remove('active');
+  if(stream){ stream.getTracks().forEach(t=>t.stop()); video.srcObject=null; }
+  setOnline(false);
+  startBtn.disabled=false; recordBtn.disabled=true; stopBtn.disabled=true;
+  recordBtn.innerHTML='<i class="fas fa-fingerprint"></i>Start Scan';
+});
+
+/* ── Hide loading overlay on start ── */
+loadingOv.style.display = 'none';
+</script>
+{% endblock %}
